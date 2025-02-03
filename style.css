@@ -1,108 +1,45 @@
-/* Style global */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    margin: 0;
-    padding: 0;
-}
-
-header {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    text-align: center;
-}
-
-nav button {
-    margin: 5px;
-    padding: 10px 20px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-nav button:hover {
-    background-color: #45a049;
-}
-
-/* Page content */
-.page {
-    display: none;
-    padding: 20px;
-}
-
-#actions, #character, #nomi, #stats, #options {
-    padding: 20px;
-}
-
-/* Boutons d'action */
+/* Style pour les boutons */
 button {
+    position: relative;  /* Nécessaire pour positionner la barre de progression à l'intérieur */
     padding: 15px;
     background-color: #4caf50;
     color: white;
     font-size: 16px;
     border: none;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
+    width: 300px; /* Largeur fixe pour tous les boutons */
+    height: 50px; /* Hauteur suffisante pour afficher la barre de progression */
+    overflow: hidden;  /* Empêche la barre de déborder du bouton */
+    margin: 10px 0;
 }
 
+/* Barre de progression (horizontale) */
+.progress-bar {
+    position: absolute;  /* Placée à l'intérieur du bouton */
+    bottom: 0;  /* Alignée au bas du bouton */
+    left: 0;
+    height: 5px;  /* Hauteur de la barre */
+    background-color: #4caf50;
+    width: 0%;  /* Largeur initiale de la barre à 0% */
+    transition: width 0.1s linear;  /* Transition fluide pour la progression */
+}
+
+/* Compteur d'actions affiché au-dessus du bouton */
+.action-count {
+    position: absolute;
+    top: -25px; /* Au-dessus du bouton */
+    right: 10px;
+    font-size: 14px;
+    color: white;
+}
+
+/* Effet de survol pour les boutons */
+button:hover {
+    background-color: #45a049;
+}
+
+/* Désactivation du bouton pendant l'action */
 button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
-}
-
-/* Barre de progression horizontale */
-.progress-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 5px;
-    background-color: #4caf50;
-    width: 0%;
-    transition: width 0.1s linear;
-    transform-origin: left center;
-}
-
-/* Compteur d'action */
-.action-count {
-    font-size: 14px;
-    position: absolute;
-    top: -25px;
-    right: 10px;
-}
-
-/* Styles du score et des informations */
-h1, h2 {
-    color: #333;
-}
-
-#score {
-    font-size: 24px;
-    color: #4caf50;
-    font-weight: bold;
-}
-
-/* Page options */
-input[type="file"] {
-    display: none;
-}
-
-button#save-now, button#save-file, button#load-file, button#hard-reset {
-    background-color: #2196F3;
-}
-
-button#save-now:hover, button#save-file:hover, button#load-file:hover, button#hard-reset:hover {
-    background-color: #1976D2;
-}
-
-/* Style de la page Character */
-#character {
-    font-size: 16px;
-    color: #333;
-}
-
-#character h1 {
-    color: #2196F3;
 }
