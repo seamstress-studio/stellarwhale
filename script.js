@@ -1,98 +1,85 @@
-// script.js
 let score = 0;
-let autoClickers = 0;
-const scoreDisplay = document.getElementById("score");
-const clickerButton = document.getElementById("clicker");
-const upgradeButton = document.getElementById("upgrade");
-const saveNowButton = document.getElementById("save-now");
-const saveFileButton = document.getElementById("save-file");
-const loadFileButton = document.getElementById("load-file");
-const fileInput = document.getElementById("file-input");
+let ticks = 0; // Le nombre de ticks disponibles
 
-// Load saved data from local storage
+const scoreDisplay = document.getElementById("score");
+const tickCountDisplay = document.getElementById("tick-count");
+
+// Fonction pour mettre à jour l'affichage du score et des ticks
+function updateDisplay() {
+    scoreDisplay.textContent = score;
+    tickCountDisplay.textContent = ticks;
+}
+
+// Fonction de progression de l'action
+function startAction(buttonId, countId, actionTime, cost, reward) {
+    const button = document.getElementById(buttonId);
+    const count = document.getElementById(countId);
+
+    if (ticks < cost) {
+        alert("Pas assez de ticks !");
+        return;
+    }
+
+    ticks -= cost; // Déduit les ticks nécessaires
+    updateDisplay();
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 100 / actionTime; // On ajoute 100% du progrès en fonction du temps
+        button.style.background = `linear-gradient(to right, #4caf50 ${progress}%, #f3f3f3 ${progress}%)`; // Remplissage progressif du bouton
+        
+        if (progress >= 100) {
+            clearInterval(interval);
+            count.textContent = parseInt(count.textContent) + 1; // Augmente le nombre
+            score += reward; // Récompense après l'action
+            updateDisplay();
+            button.style.background = ""; // Réinitialise la couleur du bouton
+        }
+    }, 100); // Intervalle de 100 ms pour la progression
+}
+
+// Ajout des écouteurs d'événements aux boutons
+document.getElementById("seal-the-hull").addEventListener("click", function() {
+    startAction("seal-the-hull", "seal-count", 5000, 50, 10); // 5 secondes, coût 50 ticks, récompense 10 points
+});
+
+document.getElementById("explore-the-system").addEventListener("click", function() {
+    startAction("explore-the-system", "explore-count", 10000, 100, 20); // 10 secondes, coût 100 ticks, récompense 20 points
+});
+
+// Timer : Ajoute 10 ticks toutes les 100 ms (10 ticks par seconde)
+setInterval(function() {
+    ticks += 10; // Ajoute 10 ticks par seconde
+    updateDisplay();
+}, 100); // 100 ms = 10 ticks par seconde
+
+// Sauvegarde, chargement et autres mécanismes que tu avais déjà
+function saveGame() {
+    const data = { score, ticks };
+    localStorage.setItem("incrementalSave", JSON.stringify(data));
+}
+
 function loadGame() {
     const savedData = localStorage.getItem("incrementalSave");
     if (savedData) {
         const data = JSON.parse(savedData);
         score = data.score;
-        autoClickers = data.autoClickers;
-        updateScore();
+        ticks = data.ticks;
+        updateDisplay();
     }
 }
 
-// Save game data to local storage
-function saveGame() {
-    const data = { score, autoClickers };
-    localStorage.setItem("incrementalSave", JSON.stringify(data));
-}
-
-// Save game data to a file
-function saveGameToFile() {
-    const data = JSON.stringify({ score, autoClickers });
-    const blob = new Blob([data], { type: "text/plain" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "game_save.txt";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
-
-// Load game data from a file
-function loadGameFromFile(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const data = JSON.parse(e.target.result);
-            if (data.score !== undefined && data.autoClickers !== undefined) {
-                score = data.score;
-                autoClickers = data.autoClickers;
-                updateScore();
-            } else {
-                alert("Invalid save file.");
-            }
-        } catch {
-            alert("Invalid save file.");
-        }
-    };
-    reader.readAsText(file);
-}
-
-clickerButton.addEventListener("click", function() {
-    score++;
-    updateScore();
+document.getElementById("save-now").addEventListener("click", saveGame);
+document.getElementById("load-file").addEventListener("click", function() {
+    loadGame();
 });
-
-upgradeButton.addEventListener("click", function() {
-    if (score >= 50) {
-        score -= 50;
-        autoClickers++;
-        updateScore();
-    }
-});
-
-saveNowButton.addEventListener("click", saveGame);
-saveFileButton.addEventListener("click", saveGameToFile);
-fileInput.addEventListener("change", loadGameFromFile);
-
-function updateScore() {
-    scoreDisplay.textContent = score;
-}
-
-setInterval(function() {
-    score += autoClickers * 5;
-    updateScore();
-}, 1000);
-
-setInterval(saveGame, 30000); // Auto-save every 30 seconds
 
 document.addEventListener("DOMContentLoaded", function() {
     loadGame();
     showPage("actions");
 });
 
+// Fonction pour changer les pages
 function showPage(pageId) {
     document.querySelectorAll(".page").forEach(page => {
         page.style.display = "none";
