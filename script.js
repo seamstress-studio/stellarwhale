@@ -1,108 +1,20 @@
 let score = 0;
-let currentAction = null; // Track the current action in progress
-let progress = 0; // Track the progress of the current action
-let actionStartTime = 0; // Start time of the current action
-let actionDuration = 0; // Duration of the current action
-let progressBarElement = null; // Element for the progress bar
-let actionButtonElement = null; // Element for the action button
-let actionCountElement = null; // Element for the count of completed actions
+let currentAction = null;
+let progress = 0;
+let actionStartTime = 0;
+let actionDuration = 0;
+let progressBarElement = null;
+let actionButtonElement = null;
+let actionCountElement = null;
+let autosaveInterval; // Variable pour l'autosave
 
-// Start action function
-function startAction(actionId, timeInSeconds, progressBar, button, countElement) {
-    if (currentAction !== null) {
-        stopAction(); // Stop any current action before starting a new one
-    }
-
-    // Set the new action parameters
-    currentAction = actionId;
-    actionStartTime = Date.now();
-    actionDuration = timeInSeconds * 1000; // Convert seconds to milliseconds
-    progress = 0; // Reset progress
-
-    progressBarElement = progressBar;
-    actionButtonElement = button;
-    actionCountElement = countElement;
-
-    button.disabled = true; // Disable the button while the action is in progress
-
-    // Start the animation loop to fill the progress bar
-    requestAnimationFrame(updateProgressBar);
-}
-
-// Update the progress bar and handle completion
-function updateProgressBar() {
-    const elapsedTime = Date.now() - actionStartTime;
-    progress = (elapsedTime / actionDuration) * 100;
-
-    if (progress >= 100) {
-        progress = 100; // Cap progress at 100%
-        completeAction(); // Action completed, handle completion
-    }
-
-    // Update the progress bar height inside the button
-    if (progressBarElement) {
-        progressBarElement.style.transform = `scaleY(${progress / 100})`; // Scale the height based on progress
-    }
-
-    // Continue updating the progress until it's complete
-    if (progress < 100) {
-        requestAnimationFrame(updateProgressBar);
-    }
-}
-
-// Action is complete, increment the count and reset the action
-function completeAction() {
-    // Increment the action count
-    actionCountElement.textContent = parseInt(actionCountElement.textContent) + 1;
-
-    // Reward the score and update display
-    score += 10; // You can adjust this value based on the action
-    updateDisplay();
-
-    // Action has completed, so reset progress and restart the action
-    restartAction();
-}
-
-// Restart the action once it's complete
-function restartAction() {
-    // Set a small delay before restarting (optional)
-    setTimeout(function() {
-        startAction(currentAction, actionDuration / 1000, progressBarElement, actionButtonElement, actionCountElement);
-    }, 500); // Restart after 500ms delay for a smoother transition
-}
-
-// Stop the current action
-function stopAction() {
-    currentAction = null;
-    progress = 0;
-    if (progressBarElement) {
-        progressBarElement.style.width = "0%"; // Reset progress bar
-    }
-    if (actionButtonElement) {
-        actionButtonElement.disabled = false;
-    }
-}
-
-// Update the score display
-function updateDisplay() {
-    document.getElementById("score").textContent = score;
-}
-
-// Action event listeners
-document.getElementById("seal-the-hull").addEventListener("click", function () {
-    startAction("seal-the-hull", 5, document.getElementById("seal-progress-bar"), this, document.getElementById("seal-count"));
-});
-
-document.getElementById("explore-the-system").addEventListener("click", function () {
-    startAction("explore-the-system", 10, document.getElementById("explore-progress-bar"), this, document.getElementById("explore-count"));
-});
-
-// Save and load game functionality
+// Sauvegarder l'état actuel du jeu dans le localStorage
 function saveGame() {
     const data = { score };
     localStorage.setItem("incrementalSave", JSON.stringify(data));
 }
 
+// Charger la sauvegarde depuis le localStorage
 function loadGame() {
     const savedData = localStorage.getItem("incrementalSave");
     if (savedData) {
@@ -112,12 +24,141 @@ function loadGame() {
     }
 }
 
+// Sauvegarder le jeu dans un fichier
+function saveGameToFile() {
+    const data = JSON.stringify({ score });
+    const blob = new Blob([data], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "game_save.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+// Charger le jeu depuis un fichier
+function loadGameFromFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.score !== undefined) {
+                score = data.score;
+                updateDisplay();
+            } else {
+                alert("Fichier de sauvegarde invalide.");
+            }
+        } catch {
+            alert("Fichier de sauvegarde invalide.");
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Mettre à jour l'affichage du score
+function updateDisplay() {
+    document.getElementById("score").textContent = score;
+}
+
+// Démarrer l'action
+function startAction(actionId, timeInSeconds, progressBar, button, countElement) {
+    if (currentAction !== null) {
+        stopAction(); // Arrêter l'action en cours
+    }
+
+    currentAction = actionId;
+    actionStartTime = Date.now();
+    actionDuration = timeInSeconds * 1000; // Conversion en millisecondes
+    progress = 0;
+
+    progressBarElement = progressBar;
+    actionButtonElement = button;
+    actionCountElement = countElement;
+
+    button.disabled = true;
+    requestAnimationFrame(updateProgressBar);
+}
+
+// Mise à jour de la barre de progression
+function updateProgressBar() {
+    const elapsedTime = Date.now() - actionStartTime;
+    progress = (elapsedTime / actionDuration) * 100;
+
+    if (progress >= 100) {
+        progress = 100;
+        completeAction();
+    }
+
+    if (progressBarElement) {
+        progressBarElement.style.transform = `scaleY(${progress / 100})`;
+    }
+
+    if (progress < 100) {
+        requestAnimationFrame(updateProgressBar);
+    }
+}
+
+// Action terminée, mettre à jour et redémarrer l'action
+function completeAction() {
+    actionCountElement.textContent = parseInt(actionCountElement.textContent) + 1;
+    score += 10;
+    updateDisplay();
+    restartAction();
+}
+
+// Redémarrer l'action
+function restartAction() {
+    setTimeout(function() {
+        startAction(currentAction, actionDuration / 1000, progressBarElement, actionButtonElement, actionCountElement);
+    }, 500);
+}
+
+// Arrêter l'action en cours
+function stopAction() {
+    currentAction = null;
+    progress = 0;
+    if (progressBarElement) {
+        progressBarElement.style.width = "0%";
+    }
+    if (actionButtonElement) {
+        actionButtonElement.disabled = false;
+    }
+}
+
+// Fonction de réinitialisation complète
+function hardReset() {
+    localStorage.removeItem("incrementalSave");
+    score = 0;
+    updateDisplay();
+}
+
+// Sauvegarde automatique toutes les 30 secondes
+function startAutosave() {
+    autosaveInterval = setInterval(saveGame, 30000);
+}
+
+// Arrêter la sauvegarde automatique
+function stopAutosave() {
+    clearInterval(autosaveInterval);
+}
+
+// Gestion des événements pour les boutons
 document.getElementById("save-now").addEventListener("click", saveGame);
-document.getElementById("load-file").addEventListener("click", function () {
+document.getElementById("save-file").addEventListener("click", saveGameToFile);
+document.getElementById("file-input").addEventListener("change", loadGameFromFile);
+document.getElementById("hard-reset").addEventListener("click", hardReset);
+
+// Lancer l'autosave au démarrage
+document.addEventListener("DOMContentLoaded", function () {
     loadGame();
+    startAutosave();
+    showPage("actions");
 });
 
-// Show page function
+// Affichage des pages
 function showPage(pageId) {
     document.querySelectorAll(".page").forEach(page => {
         page.style.display = "none";
@@ -125,7 +166,11 @@ function showPage(pageId) {
     document.getElementById(pageId).style.display = "block";
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    loadGame();
-    showPage("actions");
+// Démarrer les actions
+document.getElementById("seal-the-hull").addEventListener("click", function () {
+    startAction("seal-the-hull", 5, document.getElementById("seal-progress-bar"), this, document.getElementById("seal-count"));
+});
+
+document.getElementById("explore-the-system").addEventListener("click", function () {
+    startAction("explore-the-system", 10, document.getElementById("explore-progress-bar"), this, document.getElementById("explore-count"));
 });
