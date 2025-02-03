@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+button:disabled {
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+}
+
+.action-button {
+    width: 300px;
+    height: 50px;
+    background-color: #f3f3f3;
+    border: 2px solid #4caf50;
+    color: black;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.action-button:active {
+    background-color: #a5d6a7;
+}
+
+.page {
+    display: none;
+}
+
+#actions {
+    display: block;
+}
