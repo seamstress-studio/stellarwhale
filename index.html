@@ -10,6 +10,7 @@
     <header>
         <nav>
             <button onclick="showPage('actions')">Actions</button>
+            <button onclick="showPage('character')">Character</button>
             <button onclick="showPage('nomi')">Nomi</button>
             <button onclick="showPage('stats')">Stats</button>
             <button onclick="showPage('options')">Options</button>
@@ -21,6 +22,13 @@
         <h2>Score: <span id="score">0</span></h2>
         <button id="clicker">Cliquez-moi ! (+1)</button>
         <button id="upgrade">Acheter Auto-Click (+5/sec) [Coût: 50]</button>
+    </div>
+    
+    <div id="character" class="page" style="display: none;">
+        <h1>Character</h1>
+        <p>Niveau : <span id="character-level">1</span></p>
+        <p>Expérience : <span id="character-xp">0</span> / 100</p>
+        <button onclick="levelUp()">Niveau Suivant</button>
     </div>
     
     <div id="nomi" class="page" style="display: none;">
@@ -42,7 +50,6 @@
         <button id="hard-reset">Hard Reset</button>
     </div>
     
-    <script src="style.css"></script>
     <script src="script.js"></script>
 </body>
 </html>
