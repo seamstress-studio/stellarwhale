@@ -76,7 +76,7 @@ function stopAction() {
         actionButtonElement.disabled = false;  // Réactiver le bouton
     }
 }
-
+ 
 // Mettre à jour l'affichage du score
 function updateDisplay() {
     document.getElementById("score").textContent = score;
