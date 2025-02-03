@@ -1,8 +1,11 @@
 let score = 0;
+let actionSpeed = 1000; // 1000 ms = 1 seconde de base
+let speedUpgradeCost = 100;
+let upgradesPurchased = 0;
 
 const scoreDisplay = document.getElementById("score");
 
-// Fonction pour mettre à jour l'affichage du score
+// Met à jour l'affichage du score
 function updateDisplay() {
     scoreDisplay.textContent = score;
 }
@@ -16,21 +19,21 @@ function startAction(buttonId, countId, actionTime, reward) {
     button.disabled = true; // Désactive le bouton pendant l'action
 
     const interval = setInterval(() => {
-        progress += 100 / actionTime; // On ajoute 100% du progrès en fonction du temps
-        button.style.background = `linear-gradient(to right, #4caf50 ${progress}%, #f3f3f3 ${progress}%)`; // Remplissage progressif du bouton
-        
+        progress += 100 / actionTime;
+        button.style.background = `linear-gradient(to right, #4caf50 ${progress}%, #f3f3f3 ${progress}%)`; // Remplissage progressif
+
         if (progress >= 100) {
             clearInterval(interval);
             count.textContent = parseInt(count.textContent) + 1; // Augmente le nombre
-            score += reward; // Récompense après l'action
+            score += reward; // Récompense
             updateDisplay();
-            button.style.background = ""; // Réinitialise la couleur du bouton
+            button.style.background = ""; // Réinitialise la couleur
             button.disabled = false; // Réactive le bouton
         }
-    }, 100); // Intervalle de 100 ms pour la progression
+    }, actionSpeed); // Utilise actionSpeed pour la vitesse de progression
 }
 
-// Ajout des écouteurs d'événements aux boutons
+// Ajout des écouteurs d'événements aux boutons d'actions
 document.getElementById("seal-the-hull").addEventListener("click", function() {
     startAction("seal-the-hull", "seal-count", 50, 10); // 5 secondes, récompense 10 points
 });
@@ -39,9 +42,23 @@ document.getElementById("explore-the-system").addEventListener("click", function
     startAction("explore-the-system", "explore-count", 100, 20); // 10 secondes, récompense 20 points
 });
 
-// Sauvegarde, chargement et autres mécanismes que tu avais déjà
+// Acheter une amélioration de vitesse
+document.getElementById("buy-speed-upgrade").addEventListener("click", function() {
+    if (score >= speedUpgradeCost) {
+        score -= speedUpgradeCost;
+        upgradesPurchased++;
+        actionSpeed -= 100; // Réduit la durée de l'action de 100ms (accélère les actions)
+        speedUpgradeCost += 100; // Augmente le coût de la prochaine amélioration
+        updateDisplay();
+        alert("Amélioration de vitesse achetée !");
+    } else {
+        alert("Pas assez de points pour acheter cette amélioration.");
+    }
+});
+
+// Sauvegarde, chargement et autres mécanismes
 function saveGame() {
-    const data = { score };
+    const data = { score, actionSpeed, upgradesPurchased };
     localStorage.setItem("incrementalSave", JSON.stringify(data));
 }
 
@@ -50,6 +67,8 @@ function loadGame() {
     if (savedData) {
         const data = JSON.parse(savedData);
         score = data.score;
+        actionSpeed = data.actionSpeed;
+        upgradesPurchased = data.upgradesPurchased;
         updateDisplay();
     }
 }
