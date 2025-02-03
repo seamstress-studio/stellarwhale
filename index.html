@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu Incrémental</title>
+    <title>Progress Knight</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <nav>
             <button onclick="showPage('actions')">Actions</button>
-            <button onclick="showPage('nomi')">Nomi</button>
+            <button onclick="showPage('shop')">Boutique</button>
             <button onclick="showPage('stats')">Stats</button>
             <button onclick="showPage('options')">Options</button>
         </nav>
@@ -30,26 +30,23 @@
             <button id="explore-the-system" class="action-button">Explore the System (10 secondes)</button>
         </div>
     </div>
-    
-    <div id="nomi" class="page" style="display: none;">
-        <h1>Nomi</h1>
-        <p>Contenu à venir...</p>
+
+    <div id="shop" class="page" style="display: none;">
+        <h1>Boutique</h1>
+        <button id="buy-speed-upgrade">Réduire le temps des actions (-1s)</button>
     </div>
-    
+
     <div id="stats" class="page" style="display: none;">
         <h1>Stats</h1>
-        <p>Informations à venir...</p>
+        <p>Informations sur les progrès...</p>
     </div>
     
     <div id="options" class="page" style="display: none;">
         <h1>Options</h1>
-        <button id="save-now">Save Now</button>
-        <button id="save-file">Save as File</button>
-        <input type="file" id="file-input" style="display: none;">
-        <button id="load-file" onclick="document.getElementById('file-input').click();">Load</button>
-        <button id="hard-reset">Hard Reset</button>
+        <button id="save-now">Sauvegarder</button>
+        <button id="load-file">Charger</button>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
 </html>
