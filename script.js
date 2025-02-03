@@ -1,25 +1,23 @@
 let score = 0;
-const scoreDisplay = document.getElementById("score");
-
-let currentAction = null; // Track which action is in progress
-let progress = 0; // Progress of the current action
-let actionStartTime = null; // Time when the action started
+let currentAction = null; // Track the current action in progress
+let progress = 0; // Track the progress of the current action
+let actionStartTime = 0; // Start time of the current action
 let actionDuration = 0; // Duration of the current action
-let progressBarElement = null; // Progress bar element
-let actionButtonElement = null; // Action button element
-let actionCountElement = null; // Action count element
+let progressBarElement = null; // Element for the progress bar
+let actionButtonElement = null; // Element for the action button
+let actionCountElement = null; // Element for the count of completed actions
 
 // Start action function
-function startAction(actionId, timeInSeconds, reward, progressBar, button, countElement) {
+function startAction(actionId, timeInSeconds, progressBar, button, countElement) {
     if (currentAction !== null) {
-        stopAction();
+        stopAction(); // Stop any current action before starting a new one
     }
 
-    // Initialize the new action
+    // Set the new action parameters
     currentAction = actionId;
     actionStartTime = Date.now();
     actionDuration = timeInSeconds * 1000; // Convert seconds to milliseconds
-    progress = 0;
+    progress = 0; // Reset progress
 
     progressBarElement = progressBar;
     actionButtonElement = button;
@@ -38,7 +36,7 @@ function updateProgressBar() {
 
     if (progress >= 100) {
         progress = 100; // Cap progress at 100%
-        completeAction();
+        completeAction(); // Action completed, handle completion
     }
 
     // Update the progress bar width
@@ -52,49 +50,46 @@ function updateProgressBar() {
     }
 }
 
-// Action is complete, reset and update the count
+// Action is complete, increment the count and reset the action
 function completeAction() {
     currentAction = null;
-    actionStartTime = null;
-    actionDuration = 0;
-    progress = 0;
     progressBarElement.style.width = "0%"; // Reset the progress bar
 
-    // Update the count
+    // Update the action count
     actionCountElement.textContent = parseInt(actionCountElement.textContent) + 1;
 
     // Reward the score and update display
-    score += 10; // Adjust this value as per the action's reward
+    score += 10; // You can adjust this value based on the action
     updateDisplay();
 
     // Enable the button again
     actionButtonElement.disabled = false;
 }
 
-// Stop the current action (when a new action starts)
+// Stop the current action
 function stopAction() {
     currentAction = null;
     progress = 0;
     if (progressBarElement) {
-        progressBarElement.style.width = "0%";
+        progressBarElement.style.width = "0%"; // Reset progress bar
     }
     if (actionButtonElement) {
         actionButtonElement.disabled = false;
     }
 }
 
-// Update the display score
+// Update the score display
 function updateDisplay() {
-    scoreDisplay.textContent = score;
+    document.getElementById("score").textContent = score;
 }
 
 // Action event listeners
 document.getElementById("seal-the-hull").addEventListener("click", function () {
-    startAction("seal-the-hull", 5, 10, document.getElementById("seal-progress-bar"), this, document.getElementById("seal-count"));
+    startAction("seal-the-hull", 5, document.getElementById("seal-progress-bar"), this, document.getElementById("seal-count"));
 });
 
 document.getElementById("explore-the-system").addEventListener("click", function () {
-    startAction("explore-the-system", 10, 20, document.getElementById("explore-progress-bar"), this, document.getElementById("explore-count"));
+    startAction("explore-the-system", 10, document.getElementById("explore-progress-bar"), this, document.getElementById("explore-count"));
 });
 
 // Save and load game functionality
