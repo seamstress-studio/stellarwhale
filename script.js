@@ -1,62 +1,78 @@
 let score = 0;
-let actionSpeed = 1000; // 1000 ms = 1 seconde de base
+let actionSpeed = 1000; // Base speed: 1 second for full action
 let speedUpgradeCost = 100;
 let upgradesPurchased = 0;
 
 const scoreDisplay = document.getElementById("score");
 
-// Met à jour l'affichage du score
+// Action states to track progress
+let actionInProgress = {
+    sealTheHull: { progress: 0, interval: null },
+    exploreTheSystem: { progress: 0, interval: null }
+};
+
 function updateDisplay() {
     scoreDisplay.textContent = score;
 }
 
-// Fonction de progression de l'action
-function startAction(buttonId, countId, actionTime, reward) {
-    const button = document.getElementById(buttonId);
-    const count = document.getElementById(countId);
+function startAction(actionId, actionTime, reward) {
+    // Stop other action if it's running
+    if (actionInProgress.sealTheHull.interval) stopAction("sealTheHull");
+    if (actionInProgress.exploreTheSystem.interval) stopAction("exploreTheSystem");
+
+    const progressBar = document.getElementById(actionId + "-progress-bar");
+    const count = document.getElementById(actionId + "-count");
+    const button = document.getElementById(actionId);
 
     let progress = 0;
-    button.disabled = true; // Désactive le bouton pendant l'action
+    button.disabled = true; // Disable the button
 
-    const interval = setInterval(() => {
+    actionInProgress[actionId].interval = setInterval(() => {
         progress += 100 / actionTime;
-        button.style.background = `linear-gradient(to right, #4caf50 ${progress}%, #f3f3f3 ${progress}%)`; // Remplissage progressif
+        progressBar.style.width = progress + "%"; // Update progress bar
 
         if (progress >= 100) {
-            clearInterval(interval);
-            count.textContent = parseInt(count.textContent) + 1; // Augmente le nombre
-            score += reward; // Récompense
+            clearInterval(actionInProgress[actionId].interval);
+            actionInProgress[actionId].interval = null;
+            count.textContent = parseInt(count.textContent) + 1; // Increment count
+            score += reward; // Add reward to score
             updateDisplay();
-            button.style.background = ""; // Réinitialise la couleur
-            button.disabled = false; // Réactive le bouton
+            button.disabled = false; // Enable button
+            progressBar.style.width = "0"; // Reset progress bar
         }
-    }, actionSpeed); // Utilise actionSpeed pour la vitesse de progression
+    }, actionSpeed); // Set action duration
 }
 
-// Ajout des écouteurs d'événements aux boutons d'actions
+function stopAction(actionId) {
+    // Stop action and store progress
+    clearInterval(actionInProgress[actionId].interval);
+    actionInProgress[actionId].interval = null;
+}
+
+// Action event listeners
 document.getElementById("seal-the-hull").addEventListener("click", function() {
-    startAction("seal-the-hull", "seal-count", 50, 10); // 5 secondes, récompense 10 points
+    startAction("seal-the-hull", 50, 10); // Seal the Hull: 5 seconds, reward 10 points
 });
 
 document.getElementById("explore-the-system").addEventListener("click", function() {
-    startAction("explore-the-system", "explore-count", 100, 20); // 10 secondes, récompense 20 points
+    startAction("explore-the-system", 100, 20); // Explore the System: 10 seconds, reward 20 points
 });
 
-// Acheter une amélioration de vitesse
+// Speed upgrade
 document.getElementById("buy-speed-upgrade").addEventListener("click", function() {
     if (score >= speedUpgradeCost) {
         score -= speedUpgradeCost;
         upgradesPurchased++;
-        actionSpeed -= 100; // Réduit la durée de l'action de 100ms (accélère les actions)
-        speedUpgradeCost += 100; // Augmente le coût de la prochaine amélioration
+        actionSpeed -= 100; // Decrease action time by 100 ms (speed up actions)
+        speedUpgradeCost += 100; // Increase upgrade cost for the next upgrade
         updateDisplay();
-        alert("Amélioration de vitesse achetée !");
+        alert("Speed upgrade purchased!");
     } else {
-        alert("Pas assez de points pour acheter cette amélioration.");
+        alert("Not enough points for the upgrade.");
     }
 });
 
-// Sauvegarde, chargement et autres mécanismes
+// Save and load game functionality
 function saveGame() {
     const data = { score, actionSpeed, upgradesPurchased };
     localStorage.setItem("incrementalSave", JSON.stringify(data));
@@ -83,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function() {
     showPage("actions");
 });
 
-// Fonction pour changer les pages
+// Show page function
 function showPage(pageId) {
     document.querySelectorAll(".page").forEach(page => {
         page.style.display = "none";
