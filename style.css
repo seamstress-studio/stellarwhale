@@ -1,45 +1,27 @@
-/* Style pour les boutons */
 button {
-    position: relative;  /* Nécessaire pour positionner la barre de progression à l'intérieur */
-    padding: 15px;
-    background-color: #4caf50;
+    position: relative;
+    width: 200px; /* Largeur du bouton, ajustez comme nécessaire */
+    height: 50px; /* Hauteur du bouton */
+    background-color: #4CAF50;
     color: white;
-    font-size: 16px;
     border: none;
+    border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
-    width: 300px; /* Largeur fixe pour tous les boutons */
-    height: 50px; /* Hauteur suffisante pour afficher la barre de progression */
-    overflow: hidden;  /* Empêche la barre de déborder du bouton */
-    margin: 10px 0;
+    overflow: hidden;
 }
 
-/* Barre de progression (horizontale) */
-.progress-bar {
-    position: absolute;  /* Placée à l'intérieur du bouton */
-    bottom: 0;  /* Alignée au bas du bouton */
-    left: 0;
-    height: 5px;  /* Hauteur de la barre */
-    background-color: #4caf50;
-    width: 0%;  /* Largeur initiale de la barre à 0% */
-    transition: width 0.1s linear;  /* Transition fluide pour la progression */
-}
-
-/* Compteur d'actions affiché au-dessus du bouton */
-.action-count {
-    position: absolute;
-    top: -25px; /* Au-dessus du bouton */
-    right: 10px;
-    font-size: 14px;
-    color: white;
-}
-
-/* Effet de survol pour les boutons */
-button:hover {
-    background-color: #45a049;
-}
-
-/* Désactivation du bouton pendant l'action */
 button:disabled {
-    background-color: #ccc;
+    background-color: #cccccc;
     cursor: not-allowed;
+}
+
+.progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: #76D7C4;
+    transition: width 0.1s linear; /* Transition douce */
 }
