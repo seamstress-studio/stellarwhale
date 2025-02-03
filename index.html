@@ -10,7 +10,7 @@
     <header>
         <nav>
             <button onclick="showPage('actions')">Actions</button>
-            <button onclick="showPage('shop')">Boutique</button>
+            <button onclick="showPage('shop')">Shop</button>
             <button onclick="showPage('stats')">Stats</button>
             <button onclick="showPage('options')">Options</button>
         </nav>
@@ -22,29 +22,31 @@
 
         <div>
             <span id="seal-count">0</span>
-            <button id="seal-the-hull" class="action-button">Seal the Hull (5 secondes)</button>
+            <button id="seal-the-hull" class="action-button">Seal the Hull (5 seconds)</button>
+            <div id="seal-progress-bar" class="progress-bar"></div>
         </div>
         
         <div>
             <span id="explore-count">0</span>
-            <button id="explore-the-system" class="action-button">Explore the System (10 secondes)</button>
+            <button id="explore-the-system" class="action-button">Explore the System (10 seconds)</button>
+            <div id="explore-progress-bar" class="progress-bar"></div>
         </div>
     </div>
 
     <div id="shop" class="page" style="display: none;">
-        <h1>Boutique</h1>
-        <button id="buy-speed-upgrade">Réduire le temps des actions (-1s)</button>
+        <h1>Shop</h1>
+        <button id="buy-speed-upgrade">Speed Upgrade (-1s)</button>
     </div>
 
     <div id="stats" class="page" style="display: none;">
         <h1>Stats</h1>
-        <p>Informations sur les progrès...</p>
+        <p>Stats and progress...</p>
     </div>
     
     <div id="options" class="page" style="display: none;">
         <h1>Options</h1>
-        <button id="save-now">Sauvegarder</button>
-        <button id="load-file">Charger</button>
+        <button id="save-now">Save</button>
+        <button id="load-file">Load</button>
     </div>
 
     <script src="script.js"></script>
