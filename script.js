@@ -1,80 +1,73 @@
 let score = 0;
-let actionSpeed = 1000; // Base speed: 1 second for full action
-let speedUpgradeCost = 100;
-let upgradesPurchased = 0;
-
 const scoreDisplay = document.getElementById("score");
 
-// Action states to track progress
-let actionInProgress = {
-    sealTheHull: { progress: 0, interval: null },
-    exploreTheSystem: { progress: 0, interval: null }
-};
+let actionSpeed = 1000; // Base speed (1 second per 100%)
+let currentAction = null; // Track which action is in progress
+let currentActionProgress = 0; // Track the progress of the current action
 
+// Track button and progress bar elements for each action
+const sealButton = document.getElementById("seal-the-hull");
+const exploreButton = document.getElementById("explore-the-system");
+const sealProgressBar = document.getElementById("seal-progress-bar");
+const exploreProgressBar = document.getElementById("explore-progress-bar");
+
+const sealCount = document.getElementById("seal-count");
+const exploreCount = document.getElementById("explore-count");
+
+// Start action function
+function startAction(actionId, timeInSeconds, reward, progressBarElement, countElement, buttonElement) {
+    // If another action is already in progress, stop it
+    if (currentAction !== null) {
+        stopAction();
+    }
+
+    currentAction = actionId;
+    currentActionProgress = 0;
+
+    buttonElement.disabled = true; // Disable the button while action is in progress
+
+    const progressStep = 100 / (timeInSeconds * 1000 / actionSpeed); // How much to fill per interval
+
+    // Update the progress bar for this action
+    const interval = setInterval(() => {
+        currentActionProgress += progressStep;
+        progressBarElement.style.width = currentActionProgress + "%"; // Update progress bar
+
+        if (currentActionProgress >= 100) {
+            clearInterval(interval);
+            currentActionProgress = 0; // Reset the progress for the next round
+            countElement.textContent = parseInt(countElement.textContent) + 1; // Increase the count
+            score += reward; // Reward the player with score
+            updateDisplay(); // Update score display
+            progressBarElement.style.width = "0%"; // Reset progress bar
+            buttonElement.disabled = false; // Re-enable the button for the next round
+        }
+    }, actionSpeed);
+}
+
+// Stop the ongoing action
+function stopAction() {
+    currentAction = null;
+    currentActionProgress = 0;
+}
+
+// Update the display score
 function updateDisplay() {
     scoreDisplay.textContent = score;
 }
 
-function startAction(actionId, actionTime, reward) {
-    // Stop other action if it's running
-    if (actionInProgress.sealTheHull.interval) stopAction("sealTheHull");
-    if (actionInProgress.exploreTheSystem.interval) stopAction("exploreTheSystem");
-
-    const progressBar = document.getElementById(actionId + "-progress-bar");
-    const count = document.getElementById(actionId + "-count");
-    const button = document.getElementById(actionId);
-
-    let progress = 0;
-    button.disabled = true; // Disable the button
-
-    actionInProgress[actionId].interval = setInterval(() => {
-        progress += 100 / actionTime;
-        progressBar.style.width = progress + "%"; // Update progress bar
-
-        if (progress >= 100) {
-            clearInterval(actionInProgress[actionId].interval);
-            actionInProgress[actionId].interval = null;
-            count.textContent = parseInt(count.textContent) + 1; // Increment count
-            score += reward; // Add reward to score
-            updateDisplay();
-            button.disabled = false; // Enable button
-            progressBar.style.width = "0"; // Reset progress bar
-        }
-    }, actionSpeed); // Set action duration
-}
-
-function stopAction(actionId) {
-    // Stop action and store progress
-    clearInterval(actionInProgress[actionId].interval);
-    actionInProgress[actionId].interval = null;
-}
-
 // Action event listeners
-document.getElementById("seal-the-hull").addEventListener("click", function() {
-    startAction("seal-the-hull", 50, 10); // Seal the Hull: 5 seconds, reward 10 points
+sealButton.addEventListener("click", function () {
+    startAction("seal-the-hull", 5, 10, sealProgressBar, sealCount, sealButton); // 5 sec for Seal the Hull, reward: 10
 });
 
-document.getElementById("explore-the-system").addEventListener("click", function() {
-    startAction("explore-the-system", 100, 20); // Explore the System: 10 seconds, reward 20 points
-});
-
-// Speed upgrade
-document.getElementById("buy-speed-upgrade").addEventListener("click", function() {
-    if (score >= speedUpgradeCost) {
-        score -= speedUpgradeCost;
-        upgradesPurchased++;
-        actionSpeed -= 100; // Decrease action time by 100 ms (speed up actions)
-        speedUpgradeCost += 100; // Increase upgrade cost for the next upgrade
-        updateDisplay();
-        alert("Speed upgrade purchased!");
-    } else {
-        alert("Not enough points for the upgrade.");
-    }
+exploreButton.addEventListener("click", function () {
+    startAction("explore-the-system", 10, 20, exploreProgressBar, exploreCount, exploreButton); // 10 sec for Explore the System, reward: 20
 });
 
 // Save and load game functionality
 function saveGame() {
-    const data = { score, actionSpeed, upgradesPurchased };
+    const data = { score, actionSpeed };
     localStorage.setItem("incrementalSave", JSON.stringify(data));
 }
 
@@ -84,19 +77,13 @@ function loadGame() {
         const data = JSON.parse(savedData);
         score = data.score;
         actionSpeed = data.actionSpeed;
-        upgradesPurchased = data.upgradesPurchased;
         updateDisplay();
     }
 }
 
 document.getElementById("save-now").addEventListener("click", saveGame);
-document.getElementById("load-file").addEventListener("click", function() {
+document.getElementById("load-file").addEventListener("click", function () {
     loadGame();
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-    loadGame();
-    showPage("actions");
 });
 
 // Show page function
@@ -106,3 +93,8 @@ function showPage(pageId) {
     });
     document.getElementById(pageId).style.display = "block";
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    loadGame();
+    showPage("actions");
+});
