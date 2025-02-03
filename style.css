@@ -1,23 +1,59 @@
-/* Style général pour les boutons */
-button {
-    position: relative;
-    padding: 15px 30px;
-    font-size: 16px;
-    cursor: pointer;
-    overflow: hidden;
-    width: 200px;
-    height: 50px;
-    border: none;
-    background-color: #4CAF50;
+/* Style global */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
     color: white;
-    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+}
+
+nav button {
+    margin: 5px;
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+nav button:hover {
+    background-color: #45a049;
+}
+
+/* Page content */
+.page {
+    display: none;
+    padding: 20px;
+}
+
+#actions, #character, #nomi, #stats, #options {
+    padding: 20px;
+}
+
+/* Boutons d'action */
+button {
+    padding: 15px;
+    background-color: #4caf50;
+    color: white;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 
 button:disabled {
-    background-color: #aaa;
+    background-color: #ccc;
     cursor: not-allowed;
 }
-/* Style pour la barre de progression horizontale */
+
+/* Barre de progression horizontale */
 .progress-bar {
     position: absolute;
     bottom: 0;
@@ -29,17 +65,44 @@ button:disabled {
     transform-origin: left center;
 }
 
-/* Style de la page */
-.page {
+/* Compteur d'action */
+.action-count {
+    font-size: 14px;
+    position: absolute;
+    top: -25px;
+    right: 10px;
+}
+
+/* Styles du score et des informations */
+h1, h2 {
+    color: #333;
+}
+
+#score {
+    font-size: 24px;
+    color: #4caf50;
+    font-weight: bold;
+}
+
+/* Page options */
+input[type="file"] {
     display: none;
 }
 
-.page.active {
-    display: block;
+button#save-now, button#save-file, button#load-file, button#hard-reset {
+    background-color: #2196F3;
 }
 
-/* Style du score */
-h2 {
-    font-size: 24px;
-    font-weight: bold;
+button#save-now:hover, button#save-file:hover, button#load-file:hover, button#hard-reset:hover {
+    background-color: #1976D2;
+}
+
+/* Style de la page Character */
+#character {
+    font-size: 16px;
+    color: #333;
+}
+
+#character h1 {
+    color: #2196F3;
 }
