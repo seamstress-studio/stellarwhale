@@ -39,9 +39,9 @@ function updateProgressBar() {
         completeAction(); // Action completed, handle completion
     }
 
-    // Update the progress bar width
+    // Update the progress bar height inside the button
     if (progressBarElement) {
-        progressBarElement.style.width = progress + "%";
+        progressBarElement.style.transform = `scaleY(${progress / 100})`; // Scale the height based on progress
     }
 
     // Continue updating the progress until it's complete
