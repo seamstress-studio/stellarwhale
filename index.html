@@ -7,10 +7,38 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Score: <span id="score">0</span></h1>
-    <button id="clicker">Cliquez-moi ! (+1)</button>
-    <button id="upgrade">Acheter Auto-Click (+5/sec) [Coût: 50]</button>
+    <header>
+        <nav>
+            <button onclick="showPage('actions')">Actions</button>
+            <button onclick="showPage('nomi')">Nomi</button>
+            <button onclick="showPage('stats')">Stats</button>
+            <button onclick="showPage('options')">Options</button>
+        </nav>
+    </header>
     
+    <div id="actions" class="page">
+        <h1>Actions</h1>
+        <h2>Score: <span id="score">0</span></h2>
+        <button id="clicker">Cliquez-moi ! (+1)</button>
+        <button id="upgrade">Acheter Auto-Click (+5/sec) [Coût: 50]</button>
+    </div>
+    
+    <div id="nomi" class="page" style="display: none;">
+        <h1>Nomi</h1>
+        <p>Contenu à venir...</p>
+    </div>
+    
+    <div id="stats" class="page" style="display: none;">
+        <h1>Stats</h1>
+        <p>Informations à venir...</p>
+    </div>
+    
+    <div id="options" class="page" style="display: none;">
+        <h1>Options</h1>
+        <p>Paramètres à venir...</p>
+    </div>
+    
+    <script src="style.css"></script>
     <script src="script.js"></script>
 </body>
 </html>
