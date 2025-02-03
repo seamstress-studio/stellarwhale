@@ -35,7 +35,11 @@
     
     <div id="options" class="page" style="display: none;">
         <h1>Options</h1>
-        <p>Paramètres à venir...</p>
+        <button id="save-now">Save Now</button>
+        <button id="save-file">Save as File</button>
+        <input type="file" id="file-input" style="display: none;">
+        <button id="load-file" onclick="document.getElementById('file-input').click();">Load</button>
+        <button id="hard-reset">Hard Reset</button>
     </div>
     
     <script src="style.css"></script>
