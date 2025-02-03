@@ -37,6 +37,7 @@ button:disabled {
     background-color: #f3f3f3;
     margin-top: 5px;
     border: 1px solid #4caf50;
+    position: relative;
 }
 
 .page {
