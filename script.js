@@ -78,6 +78,8 @@ function startAction(actionId, timeInSeconds, progressBar, button, countElement)
     actionButtonElement = button;
     actionCountElement = countElement;
 
+    // Remise à zéro de la barre de progression avant le début
+    progressBarElement.style.width = "0%";
     button.disabled = true;
     requestAnimationFrame(updateProgressBar);
 }
@@ -93,7 +95,7 @@ function updateProgressBar() {
     }
 
     if (progressBarElement) {
-        progressBarElement.style.transform = `scaleY(${progress / 100})`;
+        progressBarElement.style.width = `${progress}%`;
     }
 
     if (progress < 100) {
