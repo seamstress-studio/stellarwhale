@@ -52,18 +52,23 @@ function updateProgressBar() {
 
 // Action is complete, increment the count and reset the action
 function completeAction() {
-    currentAction = null;
-    progressBarElement.style.width = "0%"; // Reset the progress bar
-
-    // Update the action count
+    // Increment the action count
     actionCountElement.textContent = parseInt(actionCountElement.textContent) + 1;
 
     // Reward the score and update display
     score += 10; // You can adjust this value based on the action
     updateDisplay();
 
-    // Enable the button again
-    actionButtonElement.disabled = false;
+    // Action has completed, so reset progress and restart the action
+    restartAction();
+}
+
+// Restart the action once it's complete
+function restartAction() {
+    // Set a small delay before restarting (optional)
+    setTimeout(function() {
+        startAction(currentAction, actionDuration / 1000, progressBarElement, actionButtonElement, actionCountElement);
+    }, 500); // Restart after 500ms delay for a smoother transition
 }
 
 // Stop the current action
