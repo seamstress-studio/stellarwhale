@@ -1,56 +1,87 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu Incrémental</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Idle Space Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { display: none; padding: 20px; }
+        .active { display: block; }
+        .progress-bar { width: 100%; background-color: #ddd; }
+        .progress { height: 20px; background: green; width: 0%; }
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <button onclick="showPage('actions')">Actions</button>
-            <button onclick="showPage('nomi')">Nomi</button>
-            <button onclick="showPage('stats')">Stats</button>
-            <button onclick="showPage('options')">Options</button>
-        </nav>
-    </header>
+    <nav>
+        <button onclick="showPage('actions')">Actions</button>
+        <button onclick="showPage('character')">Character</button>
+        <button onclick="showPage('ship')">Ship</button>
+        <button onclick="showPage('options')">Options</button>
+    </nav>
 
-    <div id="actions" class="page">
-        <h1>Actions</h1>
-        <h2>Score: <span id="score">0</span></h2>
-        <button id="seal-the-hull">
-            Seal the Hull
-            <div id="seal-progress-bar" class="progress-bar"></div>
-        </button>
-        <p>Action Count: <span id="seal-count">0</span></p>
-
-        <button id="explore-the-system">
-            Explore the System
-            <div id="explore-progress-bar" class="progress-bar"></div>
-        </button>
-        <p>Action Count: <span id="explore-count">0</span></p>
+    <div id="actions" class="container active">
+        <h2>Actions</h2>
+        <button onclick="startAction('combat')">Start Combat</button>
+        <div class="progress-bar"><div id="combat-bar" class="progress"></div></div>
+        <p>Enemies Defeated: <span id="kills">0</span></p>
     </div>
 
-    <div id="nomi" class="page" style="display: none;">
-        <h1>Nomi</h1>
-        <p>Contenu à venir...</p>
+    <div id="character" class="container">
+        <h2>Character</h2>
+        <p>Name: <input type="text" id="char-name" value="Hero"></p>
+        <p>Strength: <span id="strength">10</span></p>
     </div>
 
-    <div id="stats" class="page" style="display: none;">
-        <h1>Stats</h1>
-        <p>Informations à venir...</p>
+    <div id="ship" class="container">
+        <h2>Ship</h2>
+        <p>Ship Name: <input type="text" id="ship-name" value="Star Explorer"></p>
+        <p>Shield: <span id="shield">100</span></p>
     </div>
 
-    <div id="options" class="page" style="display: none;">
-        <h1>Options</h1>
-        <button id="save-now">Save Now</button>
-        <button id="save-file">Save as File</button>
-        <input type="file" id="file-input" style="display: none;">
-        <button id="load-file" onclick="document.getElementById('file-input').click();">Load</button>
-        <button id="hard-reset">Hard Reset</button>
+    <div id="options" class="container">
+        <h2>Options</h2>
+        <button onclick="saveGame()">Save</button>
+        <button onclick="loadGame()">Load</button>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        function showPage(page) {
+            document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
+            document.getElementById(page).classList.add('active');
+        }
+
+        function startAction(action) {
+            if (action === 'combat') {
+                let progress = document.getElementById('combat-bar');
+                progress.style.width = '0%';
+                let width = 0;
+                let interval = setInterval(() => {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                        document.getElementById('kills').innerText = parseInt(document.getElementById('kills').innerText) + 1;
+                        startAction('combat'); // Continue combat automatically
+                    } else {
+                        width += 10;
+                        progress.style.width = width + '%';
+                    }
+                }, 500);
+            }
+        }
+
+        function saveGame() {
+            localStorage.setItem('kills', document.getElementById('kills').innerText);
+            localStorage.setItem('charName', document.getElementById('char-name').value);
+            localStorage.setItem('shipName', document.getElementById('ship-name').value);
+            alert('Game Saved!');
+        }
+
+        function loadGame() {
+            document.getElementById('kills').innerText = localStorage.getItem('kills') || 0;
+            document.getElementById('char-name').value = localStorage.getItem('charName') || 'Hero';
+            document.getElementById('ship-name').value = localStorage.getItem('shipName') || 'Star Explorer';
+            alert('Game Loaded!');
+        }
+    </script>
 </body>
 </html>
